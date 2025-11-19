@@ -17,7 +17,7 @@ jobs:
       contents: write
       
     steps:
-      - name: Create GitHub release
+      - name: Create GitHub release (no suffix at all)
         uses: Oliver-Binns/Versioning@main
         with:
           ACTION_TYPE: 'Release'

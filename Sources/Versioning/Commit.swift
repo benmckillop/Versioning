@@ -18,13 +18,7 @@ public struct Commit {
         let search = /(?<type>[a-z]+)(\((?<scope>[a-z]+)\))?(?<breaking>!)?: (?<message>(.|\n)+)/
 
         do {
-            guard let match = try search.wholeMatch(in: string) else {
-                throw CommitFormatError.invalid(string)
-            }
 
-            guard let type = CommitType(rawValue: String(match.output.type)) else {
-                throw CommitFormatError.invalidPrefix(match.output.type)
-            }
             self.type = type
             self.scope = match.output.scope.map(String.init)
             self.isBreakingChange = match.output.breaking != nil

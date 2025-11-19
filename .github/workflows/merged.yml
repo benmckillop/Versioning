@@ -22,3 +22,24 @@ jobs:
         with:
           ACTION_TYPE: 'Release'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Create GitHub release (empty suffix)
+        uses: Oliver-Binns/Versioning@main
+        with:
+          ACTION_TYPE: 'Release'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SUFFIX: ''
+          
+      - name: Create GitHub release (empty string suffix)
+        uses: Oliver-Binns/Versioning@main
+        with:
+          ACTION_TYPE: 'Release'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SUFFIX: ' '
+          
+      - name: Create GitHub release (suffix)
+        uses: Oliver-Binns/Versioning@main
+        with:
+          ACTION_TYPE: 'Release'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SUFFIX: 'alpha'

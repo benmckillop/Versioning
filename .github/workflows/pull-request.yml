@@ -1,1 +1,27 @@
+name: Pull Request
 
+on:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Validate commits and run tests
+    if: github.event.pull_request.draft == false
+    runs-on: macos-26
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+    
+    
+      - name: Validate pull request title
+        uses: ./
+        with:
+          ACTION_TYPE: 'Release'

@@ -7,39 +7,79 @@ public struct Version: CustomStringConvertible {
     let major: Int
     let minor: Int
     let increment: Int
+    let suffix: String?
+    let buildNumber: Int?
     
     /// Failable initialiser for `Version` which accepts a single String argument. Because it is failable, it returns an optional `Version`.
+    /// // 1.2.3-alpha.1
     public init?(string: String) {
-        let values = string.split(separator: ".").compactMap {
+        // Split the string in 2 ie "1.2.3" and "alpha.1"
+        let values = string.split(separator: "-").compactMap {
+            String($0)
+        }
+        
+        // Split the string in 3 ie "1", "2", and "3"
+        let fullStopSeparatedValues = values[0].split(separator: ".").compactMap {
             Int($0)
         }
-        guard values.count == 3 else {
+        
+        guard fullStopSeparatedValues.count == 3 else {
             return nil
         }
-        major = values[0]
-        minor = values[1]
-        increment = values[2]
+        
+        major = fullStopSeparatedValues[0]
+        minor = fullStopSeparatedValues[1]
+        increment = fullStopSeparatedValues[2]
+        
+        if values.count == 2 {
+            let fullStopSeparatedValuesForSuffix = values[1].split(separator: ".").compactMap {
+                String($0)
+            }
+            
+            suffix  = fullStopSeparatedValuesForSuffix[0]
+            buildNumber = Int(fullStopSeparatedValuesForSuffix[1])
+        } else {
+            suffix = nil
+            buildNumber = nil
+        }
     }
     
     /// Initialiser for `Version` with integer parameters for major, minor and increment.
-    public init(_ major: Int, _ minor: Int, _ increment: Int) {
+    public init(_ major: Int, _ minor: Int, _ increment: Int, _ suffix: String? = nil, _ buildNumber: Int? = nil) {
         self.major = major
         self.minor = minor
         self.increment = increment
+        self.suffix = suffix
+        self.buildNumber = buildNumber
     }
     
     public var description: String {
-        "\(major).\(minor).\(increment)"
+        if let suffix, let buildNumber {
+            "\(major).\(minor).\(increment)-\(suffix).\(buildNumber)"
+        } else {
+            "\(major).\(minor).\(increment)"
+        }
     }
     
-    public func apply(increment: VersionIncrement) -> Version {
+    public func apply(increment: VersionIncrement, suffix: String? = nil) -> Version {
+        var version: Version
         switch increment {
         case .major:
-            return Version(major + 1, 0, 0)
+            version = Version(major + 1, 0, 0)
         case .minor:
-            return Version(major, minor + 1, 0)
+            version = Version(major, minor + 1, 0)
         case .patch:
-            return Version(major, minor, self.increment + 1)
+            version = Version(major, minor, self.increment + 1)
+        }
+        
+        if let suffix {
+            if let buildNumber {
+                return Version(version.major, version.minor, version.increment, suffix, buildNumber + 1)
+            } else {
+                return Version(version.major, version.minor, version.increment, suffix, 1)
+            }
+        } else {
+            return version
         }
     }
 }
@@ -66,6 +106,7 @@ extension Version: Comparable {
         guard lhs.minor == rhs.minor else {
             return lhs.minor < rhs.minor
         }
+        //TODO: add check that suffix is less than no suffix?
         return lhs.increment < rhs.increment
     }
 }
@@ -73,4 +114,6 @@ extension Version: Comparable {
 extension Version: Sendable { }
 extension Version {
     public static let one = Version(1, 0, 0)
+    public static let oneWithSuffix = Version(1, 0, 0, "alpha", 1)
+
 }

@@ -11,30 +11,20 @@ struct Releaser {
     }
     
     func makeRelease(sha: String, tagOnly: Bool = false, suffix: String? = nil) async throws -> Version? {
-        print("made it to make release")
         let (initialVersion, commits) = try await fetchCommits(sha: sha)
-        print("made it to initial version")
-        let newVersion = try incrementVersion(initialVersion, commits: commits)
-        print("made it to new version")
-        let newVersionDescription = if let suffix {
-            "\(newVersion.description)-\(suffix)"
-        } else {
-            newVersion.description
+        let newVersion = try incrementVersion(initialVersion, commits: commits, suffix: suffix)
+        
+        guard newVersion > initialVersion else {
+            log("Nothing to do: no significant changes made")
+            return nil
         }
         
-        // guard newVersion > initialVersion else {
-        //     log("Nothing to do: no significant changes made")
-        //     return nil
-        // }
+        try await session.createReference(version: newVersion.description, sha: sha)
         
-        try await session.createReference(version: newVersionDescription, sha: sha)
-
         if !tagOnly {
-            try await session.createRelease(version: newVersionDescription)
-            print("not tag only")
+            try await session.createRelease(version: newVersion.description)
         }
         
-        log("Released new version: \(newVersion)")
         return newVersion
     }
     
@@ -52,23 +42,23 @@ struct Releaser {
             )
         }
     }
- 
+    
     private func fetchVersion() async throws -> Version {
         let release = try await session.latestRelease()
         return Version(string: release) ?? Version(0, 0, 0)
     }
     
-    private func incrementVersion(_ initialVersion: Version, commits: [String]) throws -> Version {
+    private func incrementVersion(_ initialVersion: Version, commits: [String], suffix: String? = nil) throws -> Version {
         try commits
             .map(Commit.init)
             .compactMap(\.versionIncrement)
             .reduce(initialVersion) { version, increment in
-                version.apply(increment: increment)
+                version.apply(increment: increment, suffix: suffix)
             }
     }
     
     private func log(_ values: String...) {
-        // guard verbose else { return }
+        guard verbose else { return }
         print(values)
     }
 }

@@ -61,7 +61,7 @@ public struct Version: CustomStringConvertible {
         }
     }
     
-    public func apply(increment: VersionIncrement, suffix: String? = nil) -> Version {
+    public func apply(increment: VersionIncrement, newSuffix: String? = nil) -> Version {
         var newVersion: Version
         print(increment)
         
@@ -81,13 +81,14 @@ public struct Version: CustomStringConvertible {
         // if theres no previous suffix
             // build number set to 1 with new suffix
         
-        
+        print(self.suffix)
+        print(newSuffix)
         
         if let suffix {
-            if let previousSuffix = self.suffix, previousSuffix == suffix {
+            if let previousSuffix = self.suffix, previousSuffix == newSuffix {
                 return Version(newVersion.major, newVersion.minor, newVersion.increment, previousSuffix, (buildNumber ?? 0) + 1)
             } else {
-                return Version(newVersion.major, newVersion.minor, newVersion.increment, suffix, 1)
+                return Version(newVersion.major, newVersion.minor, newVersion.increment, newSuffix, 1)
             }
         } else {
             return newVersion

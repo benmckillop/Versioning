@@ -53,7 +53,7 @@ struct Releaser {
             .map(Commit.init)
             .compactMap(\.versionIncrement)
             .reduce(initialVersion) { version, increment in
-                version.apply(increment: increment, suffix: suffix)
+                version.apply(increment: increment, newSuffix: suffix)
             }
     }
     

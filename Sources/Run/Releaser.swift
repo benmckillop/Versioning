@@ -12,7 +12,10 @@ struct Releaser {
     
     func makeRelease(sha: String, tagOnly: Bool = false, suffix: String? = nil) async throws -> Version? {
         let (initialVersion, commits) = try await fetchCommits(sha: sha)
+        print(initialVersion)
         let newVersion = try incrementVersion(initialVersion, commits: commits, suffix: suffix)
+        
+        print(newVersion)
         
 //        guard newVersion > initialVersion else {
 //            log("Nothing to do: no significant changes made")
@@ -24,6 +27,8 @@ struct Releaser {
         if !tagOnly {
             try await session.createRelease(version: newVersion.description)
         }
+        
+        print("got to end of make release")
         
         return newVersion
     }

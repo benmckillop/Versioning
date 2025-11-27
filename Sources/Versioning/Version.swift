@@ -63,6 +63,8 @@ public struct Version: CustomStringConvertible {
     
     public func apply(increment: VersionIncrement, suffix: String? = nil) -> Version {
         var version: Version
+        print(increment)
+        
         switch increment {
         case .major:
             version = Version(major + 1, 0, 0)

@@ -62,23 +62,23 @@ public struct Version: CustomStringConvertible {
     }
     
     public func apply(increment: VersionIncrement, suffix: String? = nil) -> Version {
-        var version: Version
+        var newVersion: Version
         print(increment)
         
         switch increment {
         case .major:
-            version = Version(major + 1, 0, 0)
+            newVersion = Version(major + 1, 0, 0)
         case .minor:
-            version = Version(major, minor + 1, 0)
+            newVersion = Version(major, minor + 1, 0)
         case .patch:
-            version = Version(major, minor, self.increment + 1)
+            newVersion = Version(major, minor, self.increment + 1)
         }
         
         if let suffix {
             if let buildNumber {
-                return Version(version.major, version.minor, version.increment, suffix, buildNumber + 1)
+                return Version(newVersion.major, newVersion.minor, newVersion.increment, suffix, buildNumber + 1)
             } else {
-                return Version(version.major, version.minor, version.increment, suffix, 1)
+                return Version(newVersion.major, newVersion.minor, newVersion.increment, suffix, 1)
             }
         } else {
             return version

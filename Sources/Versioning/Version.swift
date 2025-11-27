@@ -74,11 +74,18 @@ public struct Version: CustomStringConvertible {
             newVersion = Version(major, minor, self.increment + 1)
         }
         
+        // if theres previous suffix
+            // does that match?
+                // if matching, bump build number
+                // if not matching, build number set to 1 with new suffix
+        // if theres no previous suffix
+            // build number set to 1 with new suffix
+        
+        
         
         if let suffix {
-            // If suffix has been used in previous build
-            if suffix == self.suffix {
-                return Version(newVersion.major, newVersion.minor, newVersion.increment, self.suffix, buildNumber + 1)
+            if let previousSuffix = self.suffix, previousSuffix == suffix {
+                return Version(newVersion.major, newVersion.minor, newVersion.increment, previousSuffix, buildNumber + 1)
             } else {
                 return Version(newVersion.major, newVersion.minor, newVersion.increment, suffix, 1)
             }

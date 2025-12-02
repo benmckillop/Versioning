@@ -119,6 +119,7 @@ extension Version: Comparable {
             return lhs.minor < rhs.minor
         }
         //TODO: add check that suffix is less than no suffix?
+        
         return lhs.increment < rhs.increment
     }
 }

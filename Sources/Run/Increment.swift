@@ -25,6 +25,7 @@ struct Increment: AsyncParsableCommand {
         let session = GitHubAPISession(repository: repository, apiToken: token)
         if let version = try await Releaser(session: session, verbose: verbose)
             .makeRelease(sha: sha, tagOnly: tagOnly, suffix: suffix) {
+            print(version)
         }
     }
 }

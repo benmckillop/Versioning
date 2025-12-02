@@ -14,10 +14,10 @@ struct Releaser {
         let (initialVersion, commits) = try await fetchCommits(sha: sha)
         let newVersion = try incrementVersion(initialVersion, commits: commits, suffix: suffix)
         
-        guard newVersion > initialVersion else {
-            log("Nothing to do: no significant changes made")
-            return nil
-        }
+//        guard newVersion > initialVersion else {
+//            log("Nothing to do: no significant changes made")
+//            return nil
+//        }
         
         try await session.createReference(version: newVersion.description, sha: sha)
         
